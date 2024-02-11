@@ -1,5 +1,3 @@
-import { chunk } from "$lib/util"
-
 export const products = {
     get popular() {
         return this.all
@@ -14,17 +12,31 @@ export const products = {
         }
         return Array.from(categories)
     },
-    get chunked() {
-        return chunk(this.all, 10)
+    get allCategories() {
+        const categorised = {}
+        for (const product of this.all) {
+            const category = product.category
+            categorised[category] = categorised[category] || []
+            categorised[category].push(product)
+        }
+        return Object.values(categorised)
+    },
+    price(id) {
+        let item = this.all.filter(i => i.id === id)[0]
+        if (!item) return null
+        return item.price
+    },
+    category(cat) {
+        if (cat === "all") return this.all
+        return this.all.filter(product => product.category === cat)
     },
     all: [
         {
             id: 1,
             name: "Fauna",
-            rating: 4,
+            rating: 4.5,
             reviews: 34,
             price: 79.99,
-            picture: "fauna/1.png",
             category: "table"
         },
         {
@@ -33,7 +45,6 @@ export const products = {
             rating: 3,
             reviews: 12,
             price: 49.99,
-            picture: "nomad/1.png",
             category: "desk"
         },
         {
@@ -42,7 +53,6 @@ export const products = {
             rating: 5,
             reviews: 54,
             price: 80.00,
-            picture: "ember/1.png",
             category: "desk"
         },
         {
@@ -51,7 +61,6 @@ export const products = {
             rating: 5,
             reviews: 127,
             price: 99.99,
-            picture: "cocoon/1.png",
             category: "desk"
         },
         {
@@ -60,7 +69,6 @@ export const products = {
             rating: 3,
             reviews: 24,
             price: 49.99,
-            picture: "sylvan/1.png",
             category: "desk"
         },
         {
@@ -69,7 +77,6 @@ export const products = {
             rating: 4,
             reviews: 64,
             price: 64.99,
-            picture: "muse/1.png",
             category: "desk"
         },
         {
@@ -78,7 +85,6 @@ export const products = {
             rating: 3,
             reviews: 18,
             price: 129.99,
-            picture: "serene/1.png",
             category: "table"
         },
         {
@@ -87,7 +93,6 @@ export const products = {
             rating: 4,
             reviews: 65,
             price: 72.99,
-            picture: "willow/1.png",
             category: "table"
         },
         {
@@ -96,7 +101,6 @@ export const products = {
             rating: 5,
             reviews: 321,
             price: 229.99,
-            picture: "meadow/1.png",
             category: "table"
         },
         {
@@ -105,7 +109,6 @@ export const products = {
             rating: 4,
             reviews: 183,
             price: 299.99,
-            picture: "sontana/1.png",
             category: "table"
         },
         {
@@ -114,7 +117,6 @@ export const products = {
             rating: 4,
             reviews: 210,
             price: 209.00,
-            picture: "alchemy/1.png",
             category: "table"
         },
         {
@@ -123,7 +125,6 @@ export const products = {
             rating: 4,
             reviews: 78,
             price: 20.00,
-            picture: "verdant/1.png",
             category: "planter"
         },
         {
@@ -132,7 +133,6 @@ export const products = {
             rating: 2,
             reviews: 9,
             price: 9.99,
-            picture: "firma/1.png",
             category: "planter"
         },
         {
@@ -141,7 +141,6 @@ export const products = {
             rating: 4,
             reviews: 65,
             price: 18.99,
-            picture: "terra/1.png",
             category: "planter"
         },
         {
@@ -150,7 +149,6 @@ export const products = {
             rating: 4,
             reviews: 210,
             price: 30.50,
-            picture: "flourish/1.png",
             category: "planter"
         },
         {
@@ -159,7 +157,6 @@ export const products = {
             rating: 3,
             reviews: 43,
             price: 16.98,
-            picture: "verdure/1.png",
             category: "planter"
         },
         {
@@ -168,7 +165,6 @@ export const products = {
             rating: 3,
             reviews: 26,
             price: 24.50,
-            picture: "havenwood/1.png",
             category: "planter"
         },
         {
@@ -177,7 +173,6 @@ export const products = {
             rating: 4,
             reviews: 59,
             price: 30.25,
-            picture: "perch/1.png",
             category: "chair"
         },
         {
@@ -186,7 +181,6 @@ export const products = {
             rating: 2,
             reviews: 38,
             price: 35.00,
-            picture: "sojourn/1.png",
             category: "chair"
         },
         {
@@ -195,7 +189,6 @@ export const products = {
             rating: 4,
             reviews: 22,
             price: 85.99,
-            picture: "raverie/1.png",
             category: "chair"
         },
         {
@@ -204,7 +197,6 @@ export const products = {
             rating: 3,
             reviews: 78,
             price: 59.99,
-            picture: "siesta/1.png",
             category: "chair"
         },
         {
@@ -213,7 +205,6 @@ export const products = {
             rating: 3,
             reviews: 34,
             price: 32.99,
-            picture: "wander/1.png",
             category: "chair"
         },
         {
@@ -222,7 +213,6 @@ export const products = {
             rating: 5,
             reviews: 236,
             price: 74.99,
-            picture: "nestle/1.png",
             category: "chair"
         },
         {
@@ -231,7 +221,6 @@ export const products = {
             rating: 4,
             reviews: 74,
             price: 32.99,
-            picture: "drift/1.png",
             category: "chair"
         },
         {
@@ -240,7 +229,6 @@ export const products = {
             rating: 2,
             reviews: 39,
             price: 18.99,
-            picture: "&flow/1.png",
             category: "chair"
         },
         {
@@ -249,7 +237,6 @@ export const products = {
             rating: 4,
             reviews: 68,
             price: 45.99,
-            picture: "nocturne/1.png",
             category: "painting"
         },
         {
@@ -258,7 +245,6 @@ export const products = {
             rating: 4,
             reviews: 95,
             price: 45.99,
-            picture: "bloom/1.png",
             category: "painting"
         },
         {
@@ -267,7 +253,6 @@ export const products = {
             rating: 4,
             reviews: 95,
             price: 15.99,
-            picture: "blank/1.png",
             category: "painting"
         },
         {
@@ -276,8 +261,7 @@ export const products = {
             rating: 4,
             reviews: 126,
             price: 44.99,
-            picture: "cerulean/1.png",
             category: "painting"
         },
-    ]
+    ].sort((a, b) => a.name.localeCompare(b.name))
 }

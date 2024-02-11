@@ -1,28 +1,36 @@
 <script>
     import { Popular } from "$lib/components/shop"
+    import { scale } from "svelte/transition"
     import { products } from "$lib/products"
     import { goto } from "$app/navigation"
     import { page } from "$app/stores"
+    import { chunk } from "$lib/util"
     import { onMount } from "svelte"
 
+    const pageSize = 10
+    
     $: category = $page.url.searchParams?.get("category")
-    $: categories = products.categories
-    $: chunk = 0
-    $: filtered = structuredClone(products.chunked[0])
+    $: categories = structuredClone(products.categories)
+    $: chunks = [].chunk
+        ? products.category(category).chunk(pageSize)
+        : chunk(products.category(category), pageSize)
+    $: currentChunk = 0
+    $: filtered = chunks[0]
     $: loading = false
 
     function loadMore() {
-        if (loading || !products.chunked[chunk + 1]) return
+        if (disabled) return
         loading = true
         setTimeout(() => {
-            ++chunk
-            filtered = [...filtered, ...products.chunked[chunk]]
+            ++currentChunk
+            filtered = [...filtered, ...chunks[currentChunk]]
             loading = false
         }, 1000)
     }
     
     onMount(() => {
         if (!category) setParam("category", "all", true)
+        if (!categories.includes(category)) setParam("category", "all", true)
     })
 
     function setParam(param, value, redirect) {
@@ -31,19 +39,19 @@
     }
 
     function filter(cat) {
+        currentChunk = 0
         categories = categories.filter(item => item !== cat)
         categories.unshift(cat)
         category = cat
         setParam("category", cat, true)
-        filtered = structuredClone(products.chunked[0])
-        if (category == "all") return
-        filtered = products.all.filter(products => products.category === category)
     }
+
+    $: disabled = loading || !chunks[currentChunk+1] ? true : false
 
 </script>
 
-<!-- <div class="lg:block hidden w-full h-full bg-img" /> -->
-<div class="p-4 w-full flex flex-col justify-evenly gap-20 lg:mt-20 mt-5">
+<div class="lg:block hidden w-full h-full bg-img opacity-20" />
+<div class="w-full flex flex-col justify-evenly gap-20 lg:mt-20 mt-5">
     <div class="flex flex-col gap-10">
         <h1 class="lg:text-5xl text-4xl text-left w-full font-black drop-shadow-lg">Hot 🔥</h1>
         <div class="flex gap-5 w-full lg:flex-wrap flex-wrap-0 lg:items-start items-center lg:overflow-x-hidden overflow-x-auto lg:pb-0 pb-3">
@@ -53,31 +61,47 @@
         </div>
     </div>
     <div class="flex flex-col gap-2">
-        <div class="flex w-full justify-between">
-            <h1 class="lg:text-2xl text-xl text-left w-full font-bold drop-shadow-lg">All Products ({products.all.length})</h1>
-            <button class="bg-accent-dark/5 hover:bg-accent-dark/10 transition-all py-2 px-3 rounded-xl">
-                <i class="fa-solid fa-filter"></i>
-            </button>
-        </div>
-        <div class="flex gap-1 mb-8">
+        <h1 class="lg:text-2xl text-xl text-left w-full font-bold drop-shadow-lg">
+            All Products
+        </h1>
+        <div class="flex gap-1 mb-8 lg:overflow-x-hidden overflow-x-scroll lg:pb-0 pb-2">
             {#each categories as cat}
-                <button on:click={() => filter(cat)} class="{category === cat ? "bg-accent-alt hover:bg-accent" : "border-2 border-accent-alt/50 hover:border-accent-alt"} transition-all px-6 rounded-full py-1 text-sm">{cat}</button>
+                <button on:click={() => filter(cat)} class="{category === cat ? "bg-accent-alt hover:bg-accent" : "border-2 border-accent-alt/50 hover:border-accent-alt"} transition-all px-6 rounded-full py-1 text-sm flex gap-2 items-center select-none">
+                    <p class={category === cat ? "text-light" : "text-secondary"}>{cat}</p>
+                    <p class="{category === cat ? "text-light" : "text-secondary"} text-[11px]">({products.category(cat).length})</p>
+                </button>
             {/each}
         </div>
-        {#key category}
-            <div class="flex lg:flex-row flex-col gap-5 w-full flex-wrap lg:items-start items-center">
-                {#each filtered as product}
-                    <Popular {product} />
-                {/each}
-            </div>
-        {/key}
+        {#if filtered?.length > 0}
+            {#key category}
+                <div class="flex lg:flex-row flex-col gap-5 w-full flex-wrap lg:items-start items-center">
+                    {#each filtered as product}
+                        <Popular {product} />
+                    {/each}
+                </div>
+            {/key}
+        {/if}
         <div class="flex my-10 w-full justify-center">
-            <button on:click={loadMore} class="flex items-center gap-2 bg-accent-dark/20 hover:bg-accent-dark/30 transition-all px-5 py-2 rounded-lg" disabled={loading || !products.chunked[chunk + 1]}>
-                {#if loading}
-                    <i class="fa-solid fa-circle-notch fa-spin"></i>
-                {/if}
-                <p class="font-medium">Load More</p>
-            </button>
+            {#key category}
+                <button in:scale={{ start: 0.9, opacity: 0.7 }} on:click={loadMore} class="flex items-center gap-2 group" {disabled}>
+                    {#if loading}
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <p class="font-medium opacity-50">
+                            Loading
+                        </p>
+                    {:else}
+                        {#if disabled}
+                            <p class="font-medium opacity-50">
+                                No more products to load
+                            </p>
+                        {:else}
+                            <p class="font-medium text-accent group-hover:text-accent-alt transition-all">
+                                Load More
+                            </p>
+                        {/if}
+                    {/if}
+                </button>
+            {/key}
         </div>
     </div>
 </div>

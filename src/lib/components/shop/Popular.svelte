@@ -1,17 +1,40 @@
 <script>
+    import { scale } from "svelte/transition"
+    import { onMount } from "svelte"
+
     export let product
 
+    $: thumbnail = ""
+    $: loaded = false
+
+    const name = product.name.toLowerCase().replace(/\s/g, "")
+
+    onMount(async() => {
+        loaded = true
+        const req = await import(`../../products/${name}.png?enhanced`)
+        thumbnail = req.default
+    })
+
     const rating = {
-        get count() {
-            if (product.rating <= 0) return []
-            return "-".repeat(Math.floor(product.rating) - 1).split("-")
+        items: {
+            5  : [1, 1, 1, 1, 1],
+            4.5: [1, 1, 1, 1, 0.5],
+            4  : [1, 1, 1, 1],
+            3.5: [1, 1, 1, 0.5],
+            3  : [1, 1, 1],
+            2.5: [1, 1, 0.5],
+            2  : [1, 1],
+            1.5: [1, 0.5],
+            1  : [1],
+            0  : [],
         },
-        get remainder() {
-            if (this.count?.length < 1) return "-".repeat(4).split("-")
-            if (this.count?.length === 5) return []
-            return "-".repeat(4 - this.count.length).split("-")
+        get count() {
+            const rounded = Math.floor(product.rating)
+            const decimalPart = product.rating - rounded
+            return this.items[rounded + decimalPart] || this.items[0]
         }
     }
+
     const reviews = {
         get format() {
             const SI_SYMBOL = ["", "k", "M"]
@@ -26,38 +49,35 @@
     }
 </script>
 
-<a href="/products/{product.category}/{product.name.toLowerCase()}" class="px-4 py-2 bg-secondary rounded-3xl shadow-md flex flex-col justify-between items-center flex-grow lg:w-[20%] w-full lg:min-w-fit min-w-full h-40 popular relative overflow-hidden">
-    <img src="/products/{product.name.split(" ").join("").toLowerCase()}/1.png" alt="" class="w-full h-auto absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-[1]">
-    <h1 class="text-4xl font-bold text-white drop-shadow my-5 z-[2]">{product.name}</h1>
-    <div class="w-full flex justify-between z-[2]">
-        <div class="flex flex-col">
-            <div class="flex">
-                {#each rating.count as star}
-                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
-                {/each}
-                {#each rating.remainder as star}
-                    <i class="fa-solid fa-star text-xs text-gray-400 drop-shadow"></i>
-                {/each}
+{#if loaded}
+    <a in:scale={{ start: 0.9, opacity: 1 }} href="/products/{product.category}/{name}" class="px-4 py-2 bg-secondary rounded-3xl shadow-md flex flex-col justify-between items-center flex-grow lg:w-[20%] w-full lg:min-w-fit min-w-full h-40 relative overflow-hidden group select-none popular">
+        {#if thumbnail}
+            <enhanced:img src={thumbnail} alt="" class="w-full h-auto absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-[1] saturate-50 group-hover:saturate-100 transition-all" />
+        {/if}
+        <h1 class="text-4xl font-bold text-white drop-shadow my-5 z-[2]">{product.name}</h1>
+        <div class="w-full flex justify-between z-[2]">
+            <div class="flex flex-col justify-end">
+                <div class="flex">
+                    <div class="flex absolute bottom-7 left-4">
+                        <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                        <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                        <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                        <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                        <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                    </div>
+                    <div class="flex absolute bottom-7 left-4">
+                        {#each rating.count as rating}
+                            {#if rating === 1}
+                                <i class="fa-solid fa-star text-xs text-accent drop-shadow"></i>
+                            {:else if rating === 0.5}
+                                <i class="fa-solid fa-star-half text-xs text-accent drop-shadow"></i>
+                            {/if}
+                        {/each}
+                    </div>
+                </div>
+                <p class="text-sm text-gray-300">{reviews.format} reviews</p>
             </div>
-            <p class="text-sm text-gray-300">{reviews.format} reviews</p>
+            <h1 class="self-end text-light font-bold text-lg drop-shadow">${product.price.toFixed(2)}</h1>
         </div>
-        <h1 class="self-end text-light font-black text-lg drop-shadow">$ {product.price}</h1>
-    </div>
-</a>
-<!-- <a href="/products/{product.category}/{product.name.toLowerCase()}" class="px-4 py-2 bg-secondary rounded-3xl shadow-lg flex flex-col justify-between items-center flex-grow lg:w-1/5 lg:max-w-[20%] w-full h-40 hover:scale-[1.01] transition-all duration-300 popular" style="background-image: url({product.pictures[0]})">
-    <h1 class="text-4xl font-bold text-white drop-shadow my-5">{product.name}</h1>
-    <div class="w-full flex justify-between">
-        <div class="flex flex-col">
-            <div class="flex">
-                {#each rating.count as star}
-                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
-                {/each}
-                {#each rating.remainder as star}
-                    <i class="fa-solid fa-star text-xs text-gray-400 drop-shadow"></i>
-                {/each}
-            </div>
-            <p class="text-sm text-gray-300">{reviews.format} reviews</p>
-        </div>
-        <h1 class="self-end text-light font-black text-lg drop-shadow">$ {product.price}</h1>
-    </div>
-</a> -->
+    </a>
+{/if}

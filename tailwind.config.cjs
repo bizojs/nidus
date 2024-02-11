@@ -9,12 +9,16 @@ export default {
                 primary: "#DAD9D7",
                 secondary: "#E9E9E8",
                 accent: {
-                    DEFAULT: "#95EED7",
-                    alt: "#8CD1BF",
+                    DEFAULT: "#FF4747",
+                    alt: "#E93434",
                     dark: {
                         DEFAULT: "#272727",
                         hover: "#3D3D3D"
                     }
+                },
+                overlay: {
+                    DEFAULT: "#CECDCC",
+                    hover: "#C6C6C6"
                 }
             },
             textColor: {
