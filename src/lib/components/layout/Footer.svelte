@@ -7,7 +7,7 @@
         <div class="flex flex-grow">
             <h1 class="text-5xl font-black uppercase text-light">nidus.</h1>
         </div>
-        <div class="flex gap-20">
+        <div class="flex lg:flex-row-reverse flex-row gap-20">
             <div class="flex flex-col gap-2">
                 <p class="text-sm text-light font-semibold">Resources</p>
                 <a href="/#blog" class="text-sm text-light/70 hover:text-light/80 transition-all font-medium">Blog</a>
