@@ -27,7 +27,7 @@
 </script>
 
 <a href="/products/{product.category}/{product.name.toLowerCase()}" class="px-4 py-2 bg-secondary rounded-3xl shadow-md flex flex-col justify-between items-center flex-grow lg:w-[20%] w-full lg:min-w-fit min-w-full h-40 popular relative overflow-hidden">
-    <img src={product.pictures[0]} alt="" class="w-full h-auto absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-[1]">
+    <img src="/products/{product.name.split(" ").join("").toLowerCase()}/1.png" alt="" class="w-full h-auto absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-[1]">
     <h1 class="text-4xl font-bold text-white drop-shadow my-5 z-[2]">{product.name}</h1>
     <div class="w-full flex justify-between z-[2]">
         <div class="flex flex-col">

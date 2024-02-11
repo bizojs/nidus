@@ -6,9 +6,21 @@
     import { onMount } from "svelte"
 
     $: category = $page.url.searchParams?.get("category")
-    $: filtered = structuredClone(products.all)
     $: categories = products.categories
+    $: chunk = 0
+    $: filtered = structuredClone(products.chunked[0])
+    $: loading = false
 
+    function loadMore() {
+        if (loading || !products.chunked[chunk + 1]) return
+        loading = true
+        setTimeout(() => {
+            ++chunk
+            filtered = [...filtered, ...products.chunked[chunk]]
+            loading = false
+        }, 1000)
+    }
+    
     onMount(() => {
         if (!category) setParam("category", "all", true)
     })
@@ -23,9 +35,9 @@
         categories.unshift(cat)
         category = cat
         setParam("category", cat, true)
-        filtered = structuredClone(products.all)
+        filtered = structuredClone(products.chunked[0])
         if (category == "all") return
-        filtered = filtered.filter(products => products.category === category)
+        filtered = products.all.filter(products => products.category === category)
     }
 
 </script>
@@ -59,5 +71,13 @@
                 {/each}
             </div>
         {/key}
+        <div class="flex my-10 w-full justify-center">
+            <button on:click={loadMore} class="flex items-center gap-2 bg-accent-dark/20 hover:bg-accent-dark/30 transition-all px-5 py-2 rounded-lg" disabled={loading || !products.chunked[chunk + 1]}>
+                {#if loading}
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                {/if}
+                <p class="font-medium">Load More</p>
+            </button>
+        </div>
     </div>
 </div>

@@ -25,3 +25,7 @@
     pointer-events: none;
     z-index: -1;
 }
+
+button:disabled {
+    @apply !cursor-not-allowed opacity-50
+}
