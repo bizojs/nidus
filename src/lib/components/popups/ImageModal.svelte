@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher, onMount } from "svelte"
+    import { clickOutside, stopScroll } from "$lib/actions"
     import { fade, scale } from "svelte/transition"
-    import { clickOutside } from "$lib/actions"
 
     export let src
 
@@ -17,7 +17,7 @@
 </script>
 
 {#if loaded}
-    <div transition:fade class="flex fixed justify-center items-center w-full h-full left-0 top-0 backdrop-blur-sm bg-black/30 z-50">
+    <div use:stopScroll transition:fade class="flex fixed justify-center items-center w-full h-full left-0 top-0 backdrop-blur-sm bg-black/30 z-50">
         <button on:click={close} class="absolute top-5 right-5 z-[60] group">
             <i class="fa-solid fa-xmark text-light group-hover:text-white transition-all text-2xl px-2 drop-shadow-md"></i>
         </button>

@@ -1,5 +1,6 @@
 <script>
     import { scale } from "svelte/transition"
+    import { products } from "$lib/products"
     import { onMount } from "svelte"
 
     export let product
@@ -14,39 +15,6 @@
         const req = await import(`../../products/${name}.png?enhanced`)
         thumbnail = req.default
     })
-
-    const rating = {
-        items: {
-            5  : [1, 1, 1, 1, 1],
-            4.5: [1, 1, 1, 1, 0.5],
-            4  : [1, 1, 1, 1],
-            3.5: [1, 1, 1, 0.5],
-            3  : [1, 1, 1],
-            2.5: [1, 1, 0.5],
-            2  : [1, 1],
-            1.5: [1, 0.5],
-            1  : [1],
-            0  : [],
-        },
-        get count() {
-            const rounded = Math.floor(product.rating)
-            const decimalPart = product.rating - rounded
-            return this.items[rounded + decimalPart] || this.items[0]
-        }
-    }
-
-    const reviews = {
-        get format() {
-            const SI_SYMBOL = ["", "k", "M"]
-            const tier = Math.log10(Math.abs(product.reviews)) / 3 | 0
-            if(tier == 0) return product.reviews
-            const suffix = SI_SYMBOL[tier]
-            const scale = Math.pow(10, tier * 3)
-            const scaled = product.reviews / scale
-            if (!suffix) return product.reviews.toLocaleString()
-            return scaled.toFixed(1) + suffix
-        }
-    }
 </script>
 
 {#if loaded}
@@ -66,7 +34,7 @@
                         <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
                     </div>
                     <div class="flex absolute bottom-7 left-4">
-                        {#each rating.count as rating}
+                        {#each products.rating(product.id) as rating}
                             {#if rating === 1}
                                 <i class="fa-solid fa-star text-xs text-accent drop-shadow"></i>
                             {:else if rating === 0.5}
@@ -75,7 +43,7 @@
                         {/each}
                     </div>
                 </div>
-                <p class="text-sm text-gray-300">{reviews.format} reviews</p>
+                <p class="text-sm text-gray-300">{products.reviews(product.id)} reviews</p>
             </div>
             <h1 class="self-end text-light font-bold text-lg drop-shadow">${product.price.toFixed(2)}</h1>
         </div>

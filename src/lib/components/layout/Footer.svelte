@@ -2,7 +2,7 @@
     import { contact } from "$lib/stores"
 </script>
 
-<div class="flex flex-col gap-10 w-full lg:p-16 p-6 bg-accent-alt select-none">
+<div class="flex flex-col gap-10 w-full lg:p-16 p-6 bg-accent-footer select-none">
     <div class="flex lg:flex-row flex-col gap-5 justify-between">
         <div class="flex flex-grow">
             <h1 class="text-5xl font-black uppercase text-light">nidus.</h1>

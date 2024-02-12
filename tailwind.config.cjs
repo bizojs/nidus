@@ -11,6 +11,7 @@ export default {
                 accent: {
                     DEFAULT: "#FF4747",
                     alt: "#E93434",
+                    footer: "#D35851",
                     dark: {
                         DEFAULT: "#272727",
                         hover: "#3D3D3D"

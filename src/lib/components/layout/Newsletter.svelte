@@ -14,7 +14,7 @@
                         <p class="text-light font-medium text-sm">Subscribe</p>
                     </button>
                 </div>
-                <p class="text-sm font-medium text-accent">We care about your data in our <a href="#privacy-policy" class="border-b-2 border-accent">Privacy policy</a></p>
+                <p class="text-sm font-medium text-accent">We care about your data in our <a href="/#privacy-policy" class="border-b-2 border-accent">privacy policy</a></p>
             </div>
         </div>
     </div>

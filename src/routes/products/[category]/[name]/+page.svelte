@@ -1,6 +1,7 @@
 <script>
     import { ImageModal } from "$lib/components/popups"
     import { basket, nav } from "$lib/stores"
+    import { products } from "$lib/products"
 
     export let data
 
@@ -32,7 +33,7 @@
         {/await}
     </button>
     <div class="flex flex-col flex-grow w-full">
-        <h1 class="text-2xl lg:self-left self-center w-full first-letter:uppercase drop-shadow">{data.category}</h1>
+        <h1 class="text-xl lg:self-left self-center w-full first-letter:uppercase drop-shadow">{data.category}</h1>
         <div class="flex w-full items-center justify-between lg:gap-5 gap-2 flex-wrap">
             <h1 class="text-7xl font-black lg:text-left text-center drop-shadow-md">
                 {data.name}
@@ -41,8 +42,50 @@
                 ${data.price}
             </h1>
         </div>
-        <div class="flex lg:justify-start justify-center w-full my-5">
-            <button on:click={addToBasket} class="px-12 py-2.5 flex items-center gap-5 bg-accent hover:bg-accent-alt transition-all w-fit drop-shadow mt-5">
+        <div class="flex flex-col mt-4">
+            <div class="flex relative p-3">
+                <div class="flex absolute top-1/2 -translate-y-1/2 left-0">
+                    <i class="fa-solid fa-star text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-white drop-shadow"></i>
+                </div>
+                <div class="flex absolute top-1/2 -translate-y-1/2 left-0">
+                    {#each products.rating(data.id) as rating}
+                        {#if rating === 1}
+                            <i class="fa-solid fa-star text-accent drop-shadow"></i>
+                        {:else if rating === 0.5}
+                            <i class="fa-solid fa-star-half text-accent drop-shadow"></i>
+                        {/if}
+                    {/each}
+                </div>
+            </div>
+            <p class="text-sm">{products.reviews(data.id)} reviews</p>
+        </div>
+        <!-- <div class="flex flex-col justify-end">
+            <div class="flex relative">
+                <div class="flex absolute bottom-7 left-4">
+                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
+                </div>
+                <div class="flex absolute bottom-7 left-4">
+                    {#each products.rating(data.id) as rating}
+                        {#if rating === 1}
+                            <i class="fa-solid fa-star text-xs text-accent drop-shadow"></i>
+                        {:else if rating === 0.5}
+                            <i class="fa-solid fa-star-half text-xs text-accent drop-shadow"></i>
+                        {/if}
+                    {/each}
+                </div>
+            </div>
+            <p class="text-sm text-gray-300">{products.reviews(data.id)} reviews</p>
+        </div> -->
+        <div class="flex lg:justify-start justify-center w-full lg:my-0 my-10">
+            <button on:click={addToBasket} class="px-12 py-2.5 flex items-center gap-5 bg-accent hover:bg-accent-alt transition-all lg:w-fit w-full drop-shadow mt-5">
                 <i class="fa-solid fa-cart-plus text-lg text-light"></i>
                 <p class="text-light font-medium">Add To Shopping Cart</p>
             </button>

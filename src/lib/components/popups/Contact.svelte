@@ -1,8 +1,8 @@
 <script>
+    import { clickOutside, stopScroll } from "$lib/actions"
     import { fade, scale, fly } from "svelte/transition"
     import { quintOut, backInOut } from "svelte/easing"
     import { createEventDispatcher } from "svelte"
-    import { clickOutside } from "$lib/actions"
 
     const dispatch = createEventDispatcher()
 
@@ -11,7 +11,7 @@
     }
 </script>
 
-<div transition:fade={{ duration: 100 }} class="flex fixed justify-center items-center w-full h-full left-0 top-0 backdrop-blur-sm bg-black/30 z-50">
+<div use:stopScroll transition:fade={{ duration: 100 }} class="flex fixed justify-center items-center w-full h-full left-0 top-0 backdrop-blur-sm bg-black/30 z-50">
     <button transition:fly={{ y: -20, duration: 600, easing: backInOut }} on:click={close} class="absolute top-5 right-5 z-[60] group">
         <i class="fa-solid fa-xmark text-light group-hover:text-white transition-all text-2xl px-2 drop-shadow-md"></i>
     </button>
