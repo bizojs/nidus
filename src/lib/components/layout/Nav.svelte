@@ -2,10 +2,12 @@
     import { Contact, Basket } from "$lib/components/popups"
     import { Indicator } from "$lib/components/shop"
     import { nav, contact } from "$lib/stores"
+    import { NavMenu } from "$lib/components"
     import { page } from "$app/stores"
     
     $: basketOpen = $nav
     $: contactOpen = $contact
+    $: mobileMenuOpen = false
 
     const pagesForExplore = ["/", "/about"]
 
@@ -29,11 +31,15 @@
                 <i class="fa-solid fa-basket-shopping text-2xl group-hover:text-secondary transition-all"></i>
             </button>
         {/if}
-        <button class="lg:hidden flex bg-accent-dark/10 hover:bg-accent-dark/20 transition-all lg:px-4 px-3 lg:py-2 py-1 lg:rounded-xl rounded-lg group">
+        <button on:click={() => mobileMenuOpen = !mobileMenuOpen} class="lg:hidden flex bg-accent-dark/10 hover:bg-accent-dark/20 transition-all lg:px-4 px-3 lg:py-2 py-1 lg:rounded-xl rounded-lg group">
             <i class="fa-solid fa-bars lg:text-xl text-lg group-hover:text-secondary transition-all"></i>
         </button>
     </div>
 </nav>
+
+{#if mobileMenuOpen}
+    <NavMenu on:close={() => mobileMenuOpen = false} />
+{/if}
 
 {#if basketOpen}
     <Basket on:close={nav.close} />
