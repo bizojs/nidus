@@ -1,1 +1,1 @@
-![alt text](/static/banner.png)
+![NIDUS.](/static/banner.png)
