@@ -1,13 +1,18 @@
 <script>
     import { clickOutside, stopScroll } from "$lib/actions"
+    import { fade, fly, slide } from "svelte/transition"
     import { backInOut, quintOut } from "svelte/easing"
     import { createEventDispatcher } from "svelte"
-    import { fade, fly } from "svelte/transition"
+    import { toast } from "$lib/notifications"
     import { basket, nav } from "$lib/stores"
     import { products } from "$lib/products"
     import { goto } from "$app/navigation"
 
     const dispatch = createEventDispatcher()
+
+    $: discountCodeOpen = false
+    $: applied = false
+    $: coupon = ""
 
     async function getThumbnail(name) {
         const req = await import(`../../products/${name}.png?enhanced`)
@@ -19,13 +24,29 @@
         goto("/products?category=all", { noScroll: true })
     }
 
+    function toggleDiscountCodeBox() {
+        discountCodeOpen = !discountCodeOpen
+    }
+
+    function submitCoupon() {
+        if (!coupon) return
+        toast.success({ message: "Coupon applied!", details: `Successfully applied coupon code "<span class="text-sm font-medium">${coupon}</span>"` })
+        applied = coupon
+        coupon = ""
+    }
+
+    function removeCoupon() {
+        toast.info({ message: "Coupon removed.", details: `The coupon code "<span class="text-sm font-medium">${applied}</span>" has been removed` })
+        applied = ""
+        coupon = ""
+    }
+
     function close() {
         dispatch("close")
     }
 
     $: total = $basket?.reduce((acc, product) => acc + (products.price(product.id) * product.amount), 0).toFixed(2)
-    $: tax = ((7.25 / 100) * total).toFixed(2)
-    $: shipping = 100
+    $: delivery = 100
 </script>
 
 <div use:stopScroll={{ force: false }} transition:fade={{ duration: 100 }} class="flex w-full h-full fixed top-0 left-0 backdrop-blur-[2px] bg-black/30 z-40">
@@ -48,18 +69,24 @@
                                     {product.name}
                                 </h1>
                                 <p class="font-bold text-white drop-shadow-lg">
-                                    $ {(products.price(product.id) * product.amount).toLocaleString()}
+                                    £{(products.price(product.id) * product.amount).toLocaleString()}
                                 </p>
                             </div>
-                            <div class="flex flex-col border-2 border-accent-alt/50 rounded-lg">
-                                <button on:click={() => basket.add(product)} class="py-0.5 px-2.5 group">
-                                    <i class="fa-solid fa-plus group-hover:text-accent transition-all text-sm text-accent-alt"></i>
+                            <button on:click={() => basket.clear(product.id)} class="mx-2 group h-fit self-center">
+                                <i class="fa-solid fa-trash text-accent-alt/90 group-hover:text-accent transition-all"></i>
+                            </button>
+                            <div class="flex flex-col border-2 border-accent-alt/50 rounded-lg relative">
+                                <button on:click={() => basket.add(product)} class="px-2.5 group">
+                                    <i class="fa-solid fa-plus group-hover:text-accent transition-all text-xs text-accent-alt"></i>
                                 </button>
-                                <p class="py-0.5 px-2.5 text-accent-alt cursor-default">
-                                    {product.amount}
-                                </p>
-                                <button on:click={() => basket.remove(product.id)} class="py-0.5 px-2.5 group">
-                                    <i class="fa-solid fa-minus group-hover:text-accent transition-all text-sm text-accent-alt"></i>
+                                <span class="flex flex-grow"></span>
+                                {#key product.amount}
+                                    <p transition:slide class="px-2.5 text-accent-alt cursor-default text-sm font-bold absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                                        {product.amount}
+                                    </p>
+                                {/key}
+                                <button on:click={() => basket.remove(product.id)} class="px-2.5 group">
+                                    <i class="fa-solid fa-minus group-hover:text-accent transition-all text-xs text-accent-alt"></i>
                                 </button>
                             </div>
                         </div>
@@ -72,16 +99,39 @@
         {#if $basket.length > 0}
             <div class="flex flex-col items-center justify-center my-5 gap-1 select-none w-full">
                 <div class="flex w-full justify-between items-center">
-                    <p class="text-sm">Tax</p>
-                    <p class="text-sm font-semibold">${tax.toLocaleString()}</p>
+                    <p class="text-sm">Total</p>
+                    <p class="text-sm font-semibold">£{Number(total).toLocaleString()}</p>
                 </div>
                 <div class="flex w-full justify-between items-center">
-                    <p class="text-sm">Shipping</p>
-                    <p class="text-sm font-semibold">${shipping.toLocaleString()}</p>
+                    <p class="text-sm">Delivery</p>
+                    <p class="text-sm font-semibold">£{delivery.toLocaleString()}</p>
                 </div>
                 <div class="flex w-full justify-between items-center mt-2">
-                    <p class="text-sm text-accent">Total</p>
-                    <p class="text-sm font-semibold text-accent">${(Number(total) + Number(tax) + Number(shipping)).toFixed(2).toLocaleString()}</p>
+                    <p class="text-sm text-accent">Subtotal Inc VAT</p>
+                    <p class="text-sm font-semibold text-accent">£{(Number(total) + Number(delivery)).toFixed(2).toLocaleString()}</p>
+                </div>
+                <div class="flex flex-col w-full mt-3">
+                    <button on:click={toggleDiscountCodeBox} class="flex w-full items-center justify-between group">
+                        <p class="font-medium text-sm group-hover:text-accent-alt transition-all">Got a discount code?</p>
+                        <i class="fa-solid fa-chevron-up group-hover:text-accent-alt {discountCodeOpen ? "" : "-scale-100"} transition-all"></i>
+                    </button>
+                    {#if discountCodeOpen}
+                        <div transition:slide={{ duration: 500 }} class="flex flex-col gap-2">
+                            <p class="text-sm text-secondary/80">You can only use one coupon/voucher code per order.</p>
+                            <div class="flex gap-3">
+                                <input type="text" name="coupon" id="coupon" bind:value={coupon} class="bg-primary/80 px-3 rounded-md text-sm font-semibold lg:w-96 w-1/2 flex-grow">
+                                <button on:click={submitCoupon} class="lg:px-6 px-4 lg:py-2 py-0.5 flex items-center gap-5 bg-accent hover:bg-accent-alt transition-all w-fit drop-shadow rounded-md">
+                                    <p class="text-light font-medium text-sm">Apply</p>
+                                </button>
+                            </div>
+                            {#if applied}
+                                <div in:slide={{ duration: 500 }} class="flex justify-between items-center">
+                                    <p class="text-sm">Coupon <span class="text-sm font-semibold">{applied}</span> applied</p>
+                                    <button on:click={removeCoupon} class="text-sm text-accent hover:text-accent-alt border-b">Remove</button>
+                                </div>
+                            {/if}
+                        </div>
+                    {/if}
                 </div>
             </div>
         {/if}

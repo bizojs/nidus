@@ -3,10 +3,16 @@
     import { fade, scale, fly } from "svelte/transition"
     import { quintOut, backInOut } from "svelte/easing"
     import { createEventDispatcher } from "svelte"
+    import { toast } from "$lib/notifications"
 
     const dispatch = createEventDispatcher()
 
     function close() {
+        toast.success({
+            message: "Thanks!",
+            details: "That form doesn't actually do anything since this website is just a demo. If you would actually like to give some feedback, you can contact me <a href='mailto:contact@bizo.dev' class='font-semibold border-b'>here</a>",
+            duration: false
+        })
         dispatch("close")
     }
 </script>

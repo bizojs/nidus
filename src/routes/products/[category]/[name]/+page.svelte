@@ -1,5 +1,6 @@
 <script>
     import { ImageModal } from "$lib/components/popups"
+    import { toast } from "$lib/notifications"
     import { basket, nav } from "$lib/stores"
     import { products } from "$lib/products"
 
@@ -17,7 +18,13 @@
     }
 
     function addToBasket() {
-        if (!$basket.filter(i => i.id === data.id)[0]) nav.open()
+        let item = $basket.filter(i => i.id === data.id)[0]
+        if (!item) nav.open()
+        if (item?.amount > 19) {
+            toast.error({ message: "Out of Stock!", details: `Unable to add any more <span class='font-semibold text-inherit'>${data.name}</span> to your basket.` })
+        } else {
+            toast.success({ message: "Success", details: `1x <span class='font-semibold text-inherit'>${data.name}</span> has been added to your basket.` })
+        }
         basket.add({ ...data, amount: 1 })
     }
 
@@ -39,7 +46,7 @@
                 {data.name}
             </h1>
             <h1 class="text-4xl font-black lg:text-left text-center drop-shadow-md text-accent">
-                ${data.price}
+                £{data.price}
             </h1>
         </div>
         <div class="flex flex-col mt-4">
@@ -63,27 +70,6 @@
             </div>
             <p class="text-sm">{products.reviews(data.id)} reviews</p>
         </div>
-        <!-- <div class="flex flex-col justify-end">
-            <div class="flex relative">
-                <div class="flex absolute bottom-7 left-4">
-                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
-                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
-                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
-                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
-                    <i class="fa-solid fa-star text-xs text-white drop-shadow"></i>
-                </div>
-                <div class="flex absolute bottom-7 left-4">
-                    {#each products.rating(data.id) as rating}
-                        {#if rating === 1}
-                            <i class="fa-solid fa-star text-xs text-accent drop-shadow"></i>
-                        {:else if rating === 0.5}
-                            <i class="fa-solid fa-star-half text-xs text-accent drop-shadow"></i>
-                        {/if}
-                    {/each}
-                </div>
-            </div>
-            <p class="text-sm text-gray-300">{products.reviews(data.id)} reviews</p>
-        </div> -->
         <div class="flex lg:justify-start justify-center w-full lg:my-0 my-10">
             <button on:click={addToBasket} class="px-12 py-2.5 flex items-center gap-5 bg-accent hover:bg-accent-alt transition-all lg:w-fit w-full drop-shadow mt-5">
                 <i class="fa-solid fa-cart-plus text-lg text-light"></i>

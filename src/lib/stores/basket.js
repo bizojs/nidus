@@ -29,10 +29,19 @@ function createBasket() {
             return basket
         })
     }
-    function clear() {
-        items.update(() => {
-            return []
-        })
+
+    function clear(id) {
+        if (id) {
+            let item = get(items).filter(item => item.id === id)[0]
+            if (!item) return
+            items.update((basket) => {
+                return basket.filter(item => item.id !== id)
+            })
+        } else {
+            items.update(() => {
+                return []
+            })
+        }
     }
 
     return { 

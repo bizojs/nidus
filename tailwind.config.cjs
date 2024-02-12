@@ -20,6 +20,13 @@ export default {
                 overlay: {
                     DEFAULT: "#CECDCC",
                     hover: "#C6C6C6"
+                },
+                toast: {
+                    DEFAULT: "#3D4046",
+                    success: "#4AB87A",
+                    error: "#DB4F5B",
+                    warning: "#EFA853",
+                    info: "#6D9DEC",
                 }
             },
             textColor: {

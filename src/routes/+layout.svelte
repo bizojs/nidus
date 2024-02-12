@@ -1,11 +1,13 @@
 <script>
     import { Transition, Nav, Footer, Newsletter } from "$lib/components"
+    import { Notifications } from "$lib/notifications"
     import { page } from "$app/stores"
     import "../app.css"
 
     const pagesForNewsletter = ["/", "/about"]
 </script>
 
+<Notifications />
 <div class="flex flex-col">
     <div class="lg:mx-20 mx-0 p-5 h-full flex-grow">
         <Nav />
