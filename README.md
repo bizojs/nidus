@@ -1,6 +1,6 @@
 ![NIDUS.](/static/docs/banner.png)
 
-This project is just a Demo for my Portfolio. It is not a real company nor does it sell real products. The product images were provided by [Unsplash](https://unsplash.com)
+> This project is just a Demo for my Portfolio. It is not a real company nor does it sell real products. The product images were provided by [Unsplash](https://unsplash.com)
 
 
 # Snippets
