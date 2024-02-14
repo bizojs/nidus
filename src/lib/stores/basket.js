@@ -1,4 +1,19 @@
 import { writable, get } from "svelte/store"
+import { toast } from "$lib/notifications"
+
+function toastAdded(item) {
+    toast.success({
+        message: "Success",
+        details: `1x <span class='font-semibold text-inherit'>${item.name}</span> has been added to your basket.`
+    })
+}
+
+function toastOutOfStock(item) {
+    toast.error({
+        message: "Out of Stock!",
+        details: `Unable to add any more <span class='font-semibold text-inherit'>${item.name}</span> to your basket.`
+    })
+}
 
 function createBasket() {
     const items = writable([])
@@ -6,11 +21,13 @@ function createBasket() {
     function add(product) {
         let item = get(items).filter(item => item.id === product.id)[0]
         if (!item) {
+            toastAdded(product)
             return items.update((basket) => {
                 return [product, ...basket]
             })
         }
-        if (item.amount + 1 > 20) return
+        if (item.amount + 1 > 19) return toastOutOfStock(item)
+        toastAdded(item)
         return items.update((basket) => {
             ++item.amount
             return basket
@@ -20,9 +37,7 @@ function createBasket() {
         let item = get(items).filter(item => item.id === id)[0]
         if (!item) return
         if (item.amount - 1 < 1) {
-            return items.update((basket) => {
-                return basket.filter(item => item.id !== id)
-            })
+            return items.update((basket) => basket.filter(item => item.id !== id))
         }
         return items.update((basket) => {
             --item.amount
@@ -34,13 +49,9 @@ function createBasket() {
         if (id) {
             let item = get(items).filter(item => item.id === id)[0]
             if (!item) return
-            items.update((basket) => {
-                return basket.filter(item => item.id !== id)
-            })
+            items.update((basket) => basket.filter(item => item.id !== id))
         } else {
-            items.update(() => {
-                return []
-            })
+            items.set([])
         }
     }
 

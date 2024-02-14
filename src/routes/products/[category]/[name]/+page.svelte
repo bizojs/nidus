@@ -1,6 +1,5 @@
 <script>
     import { ImageModal } from "$lib/components/popups"
-    import { toast } from "$lib/notifications"
     import { basket, nav } from "$lib/stores"
     import { products } from "$lib/products"
 
@@ -20,11 +19,6 @@
     function addToBasket() {
         let item = $basket.filter(i => i.id === data.id)[0]
         if (!item) nav.open()
-        if (item?.amount > 19) {
-            toast.error({ message: "Out of Stock!", details: `Unable to add any more <span class='font-semibold text-inherit'>${data.name}</span> to your basket.` })
-        } else {
-            toast.success({ message: "Success", details: `1x <span class='font-semibold text-inherit'>${data.name}</span> has been added to your basket.` })
-        }
         basket.add({ ...data, amount: 1 })
     }
 
