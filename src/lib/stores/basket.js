@@ -7,7 +7,7 @@ function createBasket() {
         let item = get(items).filter(item => item.id === product.id)[0]
         if (!item) {
             return items.update((basket) => {
-                return [...basket, product]
+                return [product, ...basket]
             })
         }
         if (item.amount + 1 > 20) return
