@@ -106,9 +106,21 @@
                     <p class="text-sm">Delivery</p>
                     <p class="text-sm font-semibold">£{delivery.toLocaleString()}</p>
                 </div>
-                <div class="flex w-full justify-between items-center mt-2">
+                <div class="flex w-full justify-between {applied ? "items-start" : "items-center"} mt-2">
                     <p class="text-sm text-accent">Subtotal Inc VAT</p>
-                    <p class="text-sm font-semibold text-accent">£{(Number(total) + Number(delivery)).toFixed(2).toLocaleString()}</p>
+                    {#if applied}
+                        <div class="flex flex-col">
+                            <p class="text-sm font-semibold text-accent/60 line-through w-fit self-end">£{(Number(total) + Number(delivery)).toFixed(2).toLocaleString()}</p>
+                            <div class="flex gap-2 uppercase">
+                                <p class="text-sm font-medium text-secondary/80">
+                                    Code <span class="text-sm font-semibold">{applied}</span> -
+                                </p>
+                                <p class="text-sm font-semibold text-accent">£{((Number(total) + Number(delivery)) * 0.90).toFixed(2).toLocaleString()}</p>
+                            </div>
+                        </div>
+                    {:else}
+                        <p class="text-sm font-semibold text-accent">£{(Number(total) + Number(delivery)).toFixed(2).toLocaleString()}</p>
+                    {/if}
                 </div>
                 <div class="flex flex-col w-full mt-3">
                     <button on:click={toggleDiscountCodeBox} class="flex w-full items-center justify-between group">

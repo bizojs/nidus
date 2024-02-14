@@ -8,12 +8,16 @@
     const dispatch = createEventDispatcher()
 
     function close() {
+        dispatch("close")
+    }
+
+    function submit() {
         toast.success({
             message: "Thanks!",
             details: "That form doesn't actually do anything since this website is just a demo. If you would actually like to give some feedback, you can contact me <a href='mailto:contact@bizo.dev' class='font-semibold border-b'>here</a>",
             duration: false
         })
-        dispatch("close")
+        close()
     }
 </script>
 
@@ -40,7 +44,7 @@
             <button on:click={close} class="px-8 py-3 flex items-center gap-5 bg-secondary/70 hover:bg-secondary/85 transition-all w-fit drop-shadow rounded-lg">
                 <p class="font-medium text-sm">Close</p>
             </button>
-            <button on:click={close} class="px-8 py-3 flex items-center gap-5 bg-accent hover:bg-accent-alt transition-all w-fit drop-shadow rounded-lg">
+            <button on:click={submit} class="px-8 py-3 flex items-center gap-5 bg-accent hover:bg-accent-alt transition-all w-fit drop-shadow rounded-lg">
                 <p class="text-light font-medium text-sm">Submit</p>
             </button>
         </div>

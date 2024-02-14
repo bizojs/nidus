@@ -1,5 +1,5 @@
 <script>
-    import { Popular } from "$lib/components/shop"
+    import { Product } from "$lib/components/shop"
     import { scale } from "svelte/transition"
     import { products } from "$lib/products"
     import { goto } from "$app/navigation"
@@ -56,7 +56,7 @@
         <h1 class="lg:text-5xl text-4xl text-left w-full font-black drop-shadow-lg">Hot 🔥</h1>
         <div class="flex gap-5 w-full lg:flex-wrap flex-wrap-0 lg:items-start items-center lg:overflow-x-hidden overflow-x-auto lg:pb-0 pb-3">
             {#each products.popular as product}
-                <Popular {product} />
+                <Product {product} />
             {/each}
         </div>
     </div>
@@ -76,7 +76,7 @@
             {#key category}
                 <div class="flex lg:flex-row flex-col gap-5 w-full flex-wrap lg:items-start items-center">
                     {#each filtered as product}
-                        <Popular {product} />
+                        <Product {product} />
                     {/each}
                 </div>
             {/key}
