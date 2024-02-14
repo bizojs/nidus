@@ -45,7 +45,7 @@
                 </div>
                 <p class="text-sm text-gray-300">{products.reviews(product.id)} reviews</p>
             </div>
-            <h1 class="self-end text-light font-bold text-lg drop-shadow">${product.price.toFixed(2)}</h1>
+            <h1 class="self-end text-light font-bold text-lg drop-shadow">{products.formatPrice(product.price)}</h1>
         </div>
     </a>
 {/if}

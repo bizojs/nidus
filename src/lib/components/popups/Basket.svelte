@@ -69,7 +69,7 @@
                                     {product.name}
                                 </h1>
                                 <p class="font-bold text-white drop-shadow-lg">
-                                    £{(products.price(product.id) * product.amount).toLocaleString()}
+                                    {products.formatPrice(products.price(product.id) * product.amount)}
                                 </p>
                             </div>
                             <button on:click={() => basket.clear(product.id)} class="mx-2 group h-fit self-center">
@@ -100,26 +100,32 @@
             <div class="flex flex-col items-center justify-center my-5 gap-1 select-none w-full">
                 <div class="flex w-full justify-between items-center">
                     <p class="text-sm">Total</p>
-                    <p class="text-sm font-semibold">£{Number(total).toLocaleString()}</p>
+                    <p class="text-sm font-semibold">{products.formatPrice(total)}</p>
                 </div>
                 <div class="flex w-full justify-between items-center">
                     <p class="text-sm">Delivery</p>
-                    <p class="text-sm font-semibold">£{delivery.toLocaleString()}</p>
+                    <p class="text-sm font-semibold">{products.formatPrice(delivery)}</p>
                 </div>
                 <div class="flex w-full justify-between {applied ? "items-start" : "items-center"} mt-2">
                     <p class="text-sm text-accent">Subtotal Inc VAT</p>
                     {#if applied}
                         <div class="flex flex-col">
-                            <p class="text-sm font-semibold text-accent/60 line-through w-fit self-end">£{(Number(total) + Number(delivery)).toFixed(2).toLocaleString()}</p>
+                            <p class="text-sm font-semibold text-accent/60 line-through w-fit self-end">
+                                {products.formatPrice(Number(total) + Number(delivery))}
+                            </p>
                             <div class="flex gap-2 uppercase">
                                 <p class="text-sm font-medium text-secondary/80">
                                     Code <span class="text-sm font-semibold">{applied}</span> -
                                 </p>
-                                <p class="text-sm font-semibold text-accent">£{((Number(total) + Number(delivery)) * 0.90).toFixed(2).toLocaleString()}</p>
+                                <p class="text-sm font-semibold text-accent">
+                                    {products.formatPrice((Number(total) + Number(delivery) * 0.90))}
+                                </p>
                             </div>
                         </div>
                     {:else}
-                        <p class="text-sm font-semibold text-accent">£{(Number(total) + Number(delivery)).toFixed(2).toLocaleString()}</p>
+                        <p class="text-sm font-semibold text-accent">
+                            {products.formatPrice(Number(total) + Number(delivery))}
+                        </p>
                     {/if}
                 </div>
                 <div class="flex flex-col w-full mt-3">

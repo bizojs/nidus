@@ -46,7 +46,7 @@
                 {data.name}
             </h1>
             <h1 class="text-4xl font-black lg:text-left text-center drop-shadow-md text-accent">
-                £{data.price}
+                {products.formatPrice(data.price)}
             </h1>
         </div>
         <div class="flex flex-col mt-4">

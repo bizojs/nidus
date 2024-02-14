@@ -2,7 +2,6 @@
     import { Contact, Basket } from "$lib/components/popups"
     import { Indicator } from "$lib/components/shop"
     import { nav, contact } from "$lib/stores"
-    import { toast } from "$lib/notifications"
     import { NavMenu } from "$lib/components"
     import { page } from "$app/stores"
     
